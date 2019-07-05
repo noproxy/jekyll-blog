@@ -1,8 +1,6 @@
 = 清理Mac磁盘空间
 Yi Yazhou <toxzcp@gmail.com>
 v1.0, 2019-07-05
-:page-layout: post
-:toc: right
 
 == 清理的原因
 
