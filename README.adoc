@@ -1,0 +1,20 @@
+= jekyll-base
+
+Fresh Jekyll install from running "jekyll new ..."
+
+
+== Prerequisite
+
+- Ruby
+- install bundle (`gem install bundle`)
+- `gem install bundler`
+
+== Live Preview
+
+[source,bash]
+----
+bundle exec jekyll serve --incremental
+----
+
+
+
