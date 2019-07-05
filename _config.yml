@@ -204,5 +204,6 @@ plugins:
   - jemoji
   - jekyll-asciidoc
 
-asciidoc:
-  ext: asciidoc,adoc,ad
+asciidoctor:
+    base_dir: '_posts'
+    safe: unsafe
