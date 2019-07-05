@@ -1,0 +1,145 @@
+= A Gradle issue when run checkstyle task by TestKit
+Yi Yazhou <toxzcp@gmail.com>
+v1.0, 2019-07-05
+:jbake-type: post
+:jbake-tags: gradle,groovy,jvm
+:jbake-status: published
+:source-highlighter: highlight.js
+:id: issue-gradle-01
+:toc: right
+
+== Context
+
+I was writing a test for my init script which adds the checkstyle plugin and config files. The test
+code is shown as below.
+
+[source,groovy]
+.CheckstyleSpec.groovy
+----
+class CheckstyleSpec extends InitScriptIntegrateSpecification {
+  def "can use against java project"() {
+        given:
+        createAnSimpleJavaProject()
+
+        when:
+        run 'checkstyleMain', '--init-script','/path/to/checkstyle-init.script'
+
+        then:
+        success()
+        taskRun('checkstyleMain')
+    }
+}
+----
+
+The `run` method creates an `DefaultGradleRunner` in GradleTestKit and launches a build. And the test is expected to success but it fails. This is the stacktrace.
+
+.Click to see stacktrace
+[%collapsible]
+====
+
+[source,shell]
+----
+include::issue-gradle-01.log[]
+----
+
+====
+
+== Reason
+
+The boot classpath is quite different if the gradle daemon is launched by Gradle Testkit. The classpath includes the gradle 'testRuntimeClasspath' configuration and compiled test code. The former contains much more jar files from the `gradleApi()`
+dependency which contains an implmentation of the `javax.xml.parsers.SAXParserFactory`.
+
+When creating isolated/filtering classLoader in `org.gradle.internal.classloader.DefaultClassLoaderFactory`, gradle
+specially treat JAXP implementation:
+If the system classloader has resources `META-INF/services/javax.xml.parsers.SAXParserFactory`, the enclosing
+jar file will be included into the isolated classloader.
+
+.org.gradle.internal.classloader.DefaultClassLoaderFactory.java
+[source,java]
+----
+if (needJaxpImpl()) {
+    classPath = addToClassPath(classPath, getClasspathForResource(getSystemClassLoader(), "META-INF/services/javax.xml.parsers.SAXParserFactory"));
+    classPath = addToClassPath(classPath, getClasspathForClass("org.w3c.dom.ElementTraversal"));
+}
+----
+
+
+In normal gradle build(aka launched by cli or IDE), there is no such resource in system classloader. But only 
+if the build was launched by Gradle Testkit, the system classloader would contain file `/path/to/cache/.../generated-gradle-jars/gradle-api-5.4.1.jar` and the special code was activated.
+
+The isolated or filtering classloader is used to create compiler, jdk tools and ant. The below code show how gradle create a classloader for ant.
+
+.org.gradle.api.internal.project.antbuilder.DefaultIsolatedAntBuilder.java
+[source,java]
+----
+ClassLoader antLoader = classLoaderFactory.createIsolatedClassLoader("isolated-ant-loader", DefaultClassPath.of(antClasspath)); <1>
+FilteringClassLoader loggingLoader = ... <2>
+baseAntLoader = new CachingClassLoader(new MultiParentClassLoader(antLoader, loggingLoader)); <3>
+
+ClassPath gradleCoreUrls = ... <4>
+this.antAdapterLoader = new VisitableURLClassLoader("gradle-core-loader", baseAntLoader, gradleCoreUrls); <5>
+----
+<1> a classloader only permit classes in ant
+<2> a classloader only permit classes about logger
+<3> a classloader only permit classes about ant and logger
+<4> urls for gradle core api and it's implementation
+<5> final classloader only can permit classes in ant,logger and gradle core
+
+So the final ant adapter classloader should be able to load classes in gradle core and it also has a parent to load ant and logger.
+
+The compositing classloader work like this:
+
+.Simpliped findClass procedure
+[source,java]
+----
+public Class findclass(String className) {
+    Class clazz = null;
+    for (ClassLoader parent: getParent()){ <1>
+        try {
+            clazz = parent.findClass(className); 
+        } catch(ClassNotFoundException ignored) {
+        }
+    }
+    if (clazz == null) {
+        clazz = findClass(className); <2>
+    }
+
+    if (clazz == null) {
+        throws new ClassNotFoundException(); <3>
+    }
+}
+----
+<1> try use parents to findClass
+<2> if parents fail, find it from urls which includes the whole gradle core
+<3> fails finally if still not found
+
+When loading the classes of ant, the `org.gradle.api.AntBuilder` is resolving. And it depends on `groovy/util/AntBuilder` so if classloader find and try to define the former, it will also try to find and define the later.
+
+In normal case, there is no such class named `org.gradle.api.AntBuilder` in parents and parents all throw ClassNotFoundException, and finally the class and its dependencies are resolved by the <2>
+`findClass` at the end. No exception occurs because the final `findClass` can resolve everything including gradle-core-api, gradle-core and groovy runtime.
+
+When it' coming to our issue, our gradle build is launched by Testkit so the system classpath contains implementation of JAXP(provided by `generated-gradle-jars/gradle-api-5.4.1.jar`). As the result, the antLoader(one of the parents) will include an addition jar which contains `META-INF/services/javax.xml.parsers.SAXParserFactory`. The problem is the addition `generated-gradle-jars/gradle-api-5.4.1.jar` also contains many gradle api without complete implementation. 
+So the parent find and try to define class `org.gradle.api.AntBuilder` but it cannot find all dependencies classes(for example, groovy/util/AntBuilder). The procedure likes this:
+
+.load procedure when issue occurs
+. parent find org.gradle.api.AntBuilder -> found
+. parent define org.gradle.api.AntBuilder -> ... <1>
+.. parent find groovy.util.AntBuilder -> notFound <2>
+
+The parent fails in finding class `groovy.util.AntBuilder` when defining `org.gradle.api.AntBuilder`, so the <2> cause ClassNotFoundException but jvm catch it and then throws ClassNotDefException at <1>.
+
+Yes, the thrown exception is `ClassNotDefException` and the above code just catches ClassNotFoundException.
+
+## Verification
+
+Finally, I deleted the `META-INF/services/javax.xml.parsers.SAXParserFactory` file in `generated-gradle-jars/gradle-api-5.4.1.jar` and everything goes well.
+
+## WorkAround
+
+### For Gradle Team
+
+Maybe simply adding an addition catch clause for `ClassNotDefException` when calling parent classloader can solve it.
+
+### For TestKit User
+
+I'm working on finding a solution to make the classpath launched by TestKit as similar as possible to the CLI. Because the test environment should always work the same/similar as the producting environment.
