@@ -1,4 +1,3 @@
-theme: jekyll-text-theme
 ## => Site Settings
 ##############################
 text_skin: default # "default" (default), "dark", "forest", "ocean", "chocolate", "orange"
@@ -8,7 +7,7 @@ baseurl: # does not include hostname
 title: noroxy's blog
 description: > # this means to ignore newlines until "Language & timezone"
      noproxy's blog. Mainly about Gradle and Android.
-lang: zh
+lang: en
 timezone: Asia/Shanghai
 
 
@@ -16,7 +15,7 @@ timezone: Asia/Shanghai
 ##############################
 author:
   type: person
-  name: Yi Yazhou
+  name: noproxy
   url:
   avatar: # path or url of avatar image (square)
   bio:
@@ -30,7 +29,7 @@ author:
   zhihu: # "user_name" the last part of your profile url, e.g. https://www.zhihu.com/people/user_name
   douban: # "user_name" the last part of your profile url, e.g. https://www.douban.com/people/user_name
   linkedin: # "user_name" the last part of your profile url, e.g. https://www.linkedin.com/in/user_name
-  github: # "user_name" the last part of your profile url, e.g. https://github.com/user_name
+  github: noproxy # "user_name" the last part of your profile url, e.g. https://github.com/user_name
   npm: # "user_name" the last part of your profile url, e.g. https://www.npmjs.com/~user_name
 
 
@@ -99,7 +98,7 @@ sharing:
 ## => Comments
 ##############################
 comments:
-  provider: disqus # false (default), "disqus", "gitalk", "valine", "custom"
+  provider: "disqus" # false (default), "disqus", "gitalk", "valine", "custom"
 
   ## Disqus
   disqus:
@@ -190,9 +189,10 @@ defaults:
       license: true
       aside:
         toc: true
-      show_edit_on_github: true
+      show_edit_on_github: false
       show_subscribe: true
       pageview: true
+      comment: true
 
 
 ## => Plugins

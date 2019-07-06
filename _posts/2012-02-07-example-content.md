@@ -1,5 +1,6 @@
 ---
 title: Example content
+key: example
 ---
 
 

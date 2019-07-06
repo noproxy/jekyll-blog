@@ -1,6 +1,6 @@
 = A Gradle issue when run checkstyle task by TestKit
-Yi Yazhou <toxzcp@gmail.com>
 v1.0, 2019-07-05
+:key: issue-gradle-01
 
 == Context
 
