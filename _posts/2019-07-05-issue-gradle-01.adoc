@@ -1,4 +1,4 @@
-= A Gradle issue when run checkstyle task by TestKit
+= A Gradle Classloader Issue when Run Checkstyle Task by TestKit
 v1.0, 2019-07-05
 :key: issue-gradle-01
 
@@ -6,6 +6,8 @@ v1.0, 2019-07-05
 
 I was writing a test for my init script which adds the checkstyle plugin and config files. The test
 code is shown as below.
+
+// post.excerpt
 
 [source,groovy]
 .CheckstyleSpec.groovy

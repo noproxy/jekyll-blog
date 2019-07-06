@@ -1,7 +1,5 @@
 ---
 key: mac-disk-clean
-article_header:
-  comments: true
 ---
 = 清理Mac磁盘空间
 v1.0, 2019-07-05
@@ -15,6 +13,8 @@ v1.0, 2019-07-05
 
 :sectnums:
 === App被卸载了，但配置、数据和缓存没有被删除
+
+// post.excerpt
 
 Mac App被直接删除（将 `+/Applications/XXX.app+` 移动到垃圾箱）时，它的配置、应用数据和缓存是不会删除的。
 这些数据永久的被留了下来。

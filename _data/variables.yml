@@ -23,7 +23,7 @@ default:
       theme: light
     articles:
       show_cover: true
-      show_excerpt: false
+      show_excerpt: true
       show_readmore: false
       show_info: false
     show_title: true
@@ -36,7 +36,7 @@ default:
     sharing: true
     comment: true
     license: false
-    pageview: false
+    pageview: true
     search: default
 
 sources:
