@@ -158,7 +158,7 @@ analytics:
 ## => Build
 ##############################
 markdown: kramdown
-highlighter: rouge
+highlighter: pygments
 permalink: date
 
 exclude:
@@ -202,8 +202,14 @@ plugins:
   - jekyll-paginate
   - jekyll-sitemap
   - jemoji
+  - jekyll-gist
   - jekyll-asciidoc
 
+asciidoc: {}
 asciidoctor:
     base_dir: '_posts'
     safe: unsafe
+    attributes:
+      source-highlighter: pygments
+      pygments-stylesheet: 'pygments-highlight-style'
+      icons: font

@@ -19,6 +19,8 @@ GEM
     addressable (2.6.0)
       public_suffix (>= 2.0.2, < 4.0)
     asciidoctor (2.0.10)
+    asciidoctor-diagram (1.5.18)
+      asciidoctor (>= 1.5.0, < 3.x)
     colorator (1.1.0)
     concurrent-ruby (1.1.5)
     em-websocket (0.5.1)
@@ -76,6 +78,7 @@ GEM
     mercenary (0.3.6)
     mini_portile2 (2.4.0)
     minitest (5.11.3)
+    multi_json (1.13.1)
     multipart-post (2.1.1)
     nokogiri (1.10.3)
       mini_portile2 (~> 2.4.0)
@@ -84,6 +87,8 @@ GEM
     pathutil (0.16.2)
       forwardable-extended (~> 2.6)
     public_suffix (3.1.1)
+    pygments.rb (1.1.2)
+      multi_json (>= 1.0.0)
     rake (10.5.0)
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
@@ -107,10 +112,12 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  asciidoctor-diagram (~> 1.5.4)
   jekyll
   jekyll-asciidoc
   jekyll-gist
   jekyll-text-theme!
+  pygments.rb (~> 1.1.2)
   rake (~> 10.0)
 
 BUNDLED WITH

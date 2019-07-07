@@ -1,0 +1,134 @@
+span.icon > .fab {
+  cursor: default;
+}
+
+.colist table tr th, .colist table tr td {
+  padding: .5625em .625em;
+  font-size: inherit;
+  color: rgba(0, 0, 0, .8);
+}
+
+.colist table {
+  background: #fff;
+  margin-bottom: 1.25em;
+  border: solid 1px #dedede;
+}
+
+.admonitionblock td.icon {
+  text-align: center;
+  width: 80px;
+  padding: 0;
+  border: 0;
+}
+
+.admonitionblock > table td.icon {
+  text-align: center;
+  width: 80px;
+}
+
+.admonitionblock td.content {
+  padding: 0;
+  border: 0;
+}
+
+.admonitionblock td.icon [class^="fa icon-"] {
+  font-size: 2.5em;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, .5);
+  cursor: default;
+}
+
+.admonitionblock td.icon .icon-note:before {
+  content: "\f05a";
+  color: #19407c;
+}
+
+.admonitionblock td.icon .icon-tip:before {
+  content: "\f0eb";
+  text-shadow: 1px 1px 2px rgba(155, 155, 0, 0.8);
+  color: #111;
+}
+
+.admonitionblock td.icon .icon-warning:before {
+  content: "\f071";
+  color: #bf6900;
+}
+
+.admonitionblock td.icon .icon-caution:before {
+  content: "\f06d";
+  color: #bf3400;
+}
+
+.admonitionblock td.icon .icon-important:before {
+  content: "\f06a";
+  color: #bf0000;
+}
+
+.admonitionblock > table {
+  border-collapse: separate;
+  border: 0;
+  background: none;
+  width: 100%;
+}
+
+.admonitionblock > table td.content {
+  padding-left: 1.125em;
+  padding-right: 1.25em;
+  border-left: 1px solid #ddddd8;
+  color: rgba(0, 0, 0, .6);
+}
+
+.colist td:not([class]):first-child {
+  padding: .4em .75em 0;
+  line-height: 1;
+  vertical-align: top;
+}
+
+.colist td:not([class]):last-child {
+  padding: .25em 0;
+}
+
+.colist table td {
+  border: 0;
+}
+
+.hdlist > table, .colist > table {
+  border: 0;
+  background: none
+}
+
+.hdlist > table > tbody > tr, .colist > table > tbody > tr {
+  background: none
+}
+
+.colist table tr td, .admonitionbloc table tr td {
+  line-height: 1.6;
+}
+
+.conum[data-value] {
+  display: inline-block;
+  color: #fff !important;
+  background-color: rgba(0, 0, 0, .8);
+  -webkit-border-radius: 100px;
+  border-radius: 100px;
+  text-align: center;
+  font-size: .75em;
+  width: 1.67em;
+  height: 1.67em;
+  line-height: 1.67em;
+  font-family: "Open Sans", "DejaVu Sans", sans-serif;
+  font-style: normal;
+  font-weight: bold
+}
+
+.conum[data-value] + b {
+  display: none;
+}
+
+.conum[data-value]::after {
+  content: attr(data-value);
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}

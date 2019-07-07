@@ -1,6 +1,7 @@
-= A Gradle Classloader Issue when Run Checkstyle Task by TestKit
+= ClassNotFoundException when Run Checkstyle Task by TestKit
 v1.0, 2019-07-05
-:key: issue-gradle-01
+:page-key: gradle-issue-01
+:page-tag: gradle
 
 == Context
 

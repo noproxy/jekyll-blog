@@ -1,6 +1,7 @@
 = 如何使用Gradle API获取项目的依赖信息
-:key: gradle-tips-discovery-dependencies
-:tag: gradle
+:page-key: gradle-discovery-dependencies
+:page-tags: [gradle, tips]
+:page-liquid:
 
 有时我们会想开发一个插件或者gradle script获取当前项目的依赖。在不了解gradle的api的情况下，可能会用解析build.gradle文件的笨办法方式去分析，但其实这种方式很不靠谱。
 
@@ -23,6 +24,8 @@ Gradle的依赖是用Configuration进行管理的，不同的configuration，里
 
 这里以之为例，来介绍如何查询其中的依赖。
 
-{% gist c6bc77cc0f4ff9876eb1b04a491578d7 AndroidPluginKitPlugin.java %}
+++++
+{% gist c6bc77cc0f4ff9876eb1b04a491578d7 %}
+++++
 
 
