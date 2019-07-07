@@ -1,5 +1,4 @@
 = ClassNotFoundException when Run Checkstyle Task by TestKit
-v1.0, 2019-07-05
 :page-key: gradle-issue-01
 :page-tag: gradle
 

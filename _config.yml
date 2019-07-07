@@ -4,9 +4,9 @@ text_skin: default # "default" (default), "dark", "forest", "ocean", "chocolate"
 highlight_theme: default # "default" (default), "tomorrow", "tomorrow-night", "tomorrow-night-eighties", "tomorrow-night-blue", "tomorrow-night-bright"
 url: "http://noproxy.netlify.com" # the base hostname & protocol for your site e.g. https://www.someone.com
 baseurl: # does not include hostname
-title: noroxy's blog
+title: No Proxy's Blog
 description: > # this means to ignore newlines until "Language & timezone"
-     noproxy's blog. Mainly about Gradle and Android.
+  Noproxy's blog. Mainly about Gradle and Android.
 lang: en
 timezone: Asia/Shanghai
 
@@ -185,7 +185,7 @@ defaults:
       type: posts
     values:
       layout: article
-      sharing: true
+      sharing: false
       license: true
       aside:
         toc: true
@@ -207,9 +207,9 @@ plugins:
 
 asciidoc: {}
 asciidoctor:
-    base_dir: '_posts'
-    safe: unsafe
-    attributes:
-      source-highlighter: pygments
-      pygments-stylesheet: 'pygments-highlight-style'
-      icons: font
+  base_dir: '_posts'
+  safe: unsafe
+  attributes:
+    source-highlighter: pygments
+    pygments-stylesheet: 'pygments-highlight-style'
+    icons: font

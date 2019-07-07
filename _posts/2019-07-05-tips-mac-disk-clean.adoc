@@ -1,5 +1,4 @@
 = 如何清理Mac磁盘空间
-v1.0, 2019-07-05
 :page-key: mac-disk-clean
 :page-tag: tips
 
