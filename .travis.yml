@@ -12,5 +12,5 @@ deploy:
   local_dir: _site
   keep-history: true
   on:
-    branch: master
-    target_branch: gh-pages
+    branch: sources
+    target_branch: master
