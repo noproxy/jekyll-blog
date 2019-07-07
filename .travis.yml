@@ -4,7 +4,7 @@ rvm:
 branches:
   only:
   - master
-script: bundle exec jekyll build
+script: JEKYLL_ENV=production jekyll build --config _config_github.yml
 deploy:
   provider: pages
   skip_cleanup: true
