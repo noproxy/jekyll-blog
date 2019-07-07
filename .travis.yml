@@ -3,7 +3,7 @@ rvm:
   - 2.6.3
 branches:
   only:
-  - master
+  - sources
 script: JEKYLL_ENV=production jekyll build --config _config_github.yml
 deploy:
   provider: pages
