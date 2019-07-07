@@ -1,4 +1,4 @@
-{%- assign _author = site.data.authors[include.article.author] | default: site.author -%}
+{%- assign _author = site.data.authors[include.article.author] | default: null -%}
 
 {%- if include.html != false -%}
 
