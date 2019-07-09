@@ -1,0 +1,49 @@
+= Why Gradle Extension Should be Reactive
+:page-key: gradle-extension-reactive
+:page-tag: gradle
+:page-published: false
+
+== Context
+
+
+ At now, the values and options in kapt extension is non-reactive. It means anyone can only update the values before `afterEvaluate`. 
+If  kapt plugin has created tasks and configured task parameters, any changes to kapt extension makes no sense.
+
+For example, this piece code won't work:
+```
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+afterEvaluate {
+    kapt {
+        arguments {
+            arg("foo", "bar")
+        }
+    }
+}
+```
+
+This limit cause trouble for plugin and script author.
+
+Because some annotation parameters can only get known before `afterEvaluate`. And in some situtaion where computing parameters is cost and should be 
+
+Given an example as below.
+```
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android.applicationVariants.all { variant ->
+    kapt {
+        arguments {
+            arg("app.applicationId", variant.applicationId)
+        }
+    }
+}
+```
+
+This piece code won't work because when android plugin is creating variants and kapt plugin responses to variant first and creates kapt tasks and configure everything done.
+And then the varaints user scripts
+
+
+I don't mean any reactive framework or library.
+

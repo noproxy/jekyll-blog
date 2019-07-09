@@ -1,0 +1,122 @@
+# Annotations Processing in Gradle Multi-Project Build
+:page-key: gradle-multi-project-annotations-processing
+:page-tag: gradle
+
+
+在通常情况下，一个gradle项目往往由多个project组成，也就是multi-project build。
+
+以一个android项目为例：
+
+.Example Multi-project Build
+----
+├ app/
+├ build.gradle
+├── feature/
+├── build.gradle
+└ settings.gradle
+----
+
+
+在使用一些注解处理工具时，如dagger2、room等，注解的使用可能存在于任意的project中。但最终注解处理，需要在最顶层的app项目中，一些特定的类必须在app中生成，并且生成时也必须能获取到依赖的project feature中的注解。
+
+但实际上，JSR 269描述的注解处理并不能处理如此复杂的场景。`编译时` 注解处理是运行在**代码编译**（javac）阶段，而在Gradle的multi-project build中，多个project之前的依赖传递，使用的是已经编译的classes.jar。这在根本上造成了gradle multi-project build与APT的不兼容。
+
+// post.excerpt
+
+通俗的说，注解处理器可以在feature编译的时候处理feature里的注解，也可以在app编译的时候处理app里面的注解。但是想在app编译的时候处理去feature里面的注解是不可能的。更准确的说，在app的processor里:
+
+> 无法通过 `RoundEnvironment` 获取任何feature项目中源码的信息
+
+实际上，不仅是feature里的注解信息无法获取，任何Maven依赖、jar依赖里的注解信息也是无法处理的。
+
+编译时注解处理的原理决定了只靠JSR 269的API是无法在multi-project build下进行注解处理的。而运行时注解处理不会在编译时做任何事，运行时可见的类都可以处理，所以有些框架（比如retrofit）虽然使用了注解，但是不会受这个问题困扰。
+
+## WorkAround
+
+虽然JSR 269提供的能力不足以解决问题，但借助与Gradle的依赖传递机制，我们可以通过Gradle Plugin来解决mulit-project build时注解处理的问题。
+
+一个最简单的思路就是：
+. 在feature编译时，通过AST遍历或者注解处理将所有注解信息记录在一个文件里，比如extra_annotations.json
+. 在app编译之前，通过Gradle的依赖传递，收集所有依赖的extra_annotations.json，并传递给processor（通过注解处理参数，即ap option）
+. 在app编译时，app的processor除了处理APT提供的注解信息外，还需要处理2中提供的额外信息
+
+值得注意的是，在1中记录注解信息，将是3中能使用的全部信息。例如：
+
+[source,java]
+----
+package org.example;
+
+@Foo(value = "demo")
+public class Bar extends Baz {
+
+}
+----
+
+
+在步骤1中记录时，只保存了被注解标注的class的CanonicalName(`org.example.Bar`)，而没有记录@Foo注解的Value的值。那么在步骤3中，注解处理器就再也拿不到这个信息了。如之前所说，依赖里的编译时信息，都是无法再通过 `RoundEnvironment` 获取了。
+
+不过，`ProcessingEnvironment` 是编译环境信息（不是**编译时**），所以按理来说，通过 `ProcessingEnvironment.getElementUtils()` 和 `ProcessingEnvironment.getTypeUtils` 获取信息是可以的，只要classpath中存在相关信息即可。
+
+所以用下面方式查询 `org.example.Bar` 的超类是可以的：
+
+> 尚未确认
+
+[source,java]
+----
+// expect to 'org.example.Baz'
+TypeMirror superClass = env.getElementUtils().getTypeElement("org.example.Bar").getSuperclass()
+----
+
+
+## Details
+
+. 在feature编译时，通过AST遍历或者注解处理将所有注解信息记录在一个文件里，比如extra_annotations.json
+. 在app编译之前，通过Gradle的依赖传递，收集所有依赖的extra_annotations.json，并传递给processor（通过注解处理参数，即ap option）
+. 在app编译时，app的processor除了处理APT提供的注解信息外，还需要处理2中提供的额外信息
+
+下面详细讲解方案的实现模块。
+
+### Recording Annotation Processor
+
+一个将所有注解的信息存在一个文件的注解处理器。它需要：
+
+. 从AP options读取输出文件要保存的路径
+. 通过 `@SupportedAnnotationTypes("*")` 来处理所有的注解；
+. 将注解信息序列化保存到文件，json、xml、protobuffer等能储存树的格式都可以；
+
+
+### Gradle Plugin for Producer
+
+
+一个apply到所有producer（被依赖的）项目的Gradle插件。在android中，一般是使用了 `com.android.library` 或 `java-library` 插件的项目。它需要：
+
+
+. 在module中注册recording annotation processor
+. 通过AP option向processor传递生成的文件的路径
+. 注册一个Configuration：
+** 设置CanBeConsumed = true, CanBeResolved = false
+** Artifacts Attributes中，设置ArtifactType=EXTRA_ANNOTATIONS
+. 将processor的产物，注册为这个Configuration的一个PublishArtifact
+
+如果要支持variant-aware，上面的步骤需要为每一个variant创建一套单独的。同时，创建的configuration也需要在Artifacts Attributes中，设置variantType为对应的值。
+
+
+### Gradle Plugin for Consumer 
+
+一个apply到所有consumer项目的Gradle插件。在android中，一般是使用了 `com.android.application` 插件的项目。它需要：
+
+. 通过artifactView API从CompileClasspath获取所有ArtifactType=EXTRA_ANNOTATIONS的文件
+. 将上面的文件（或文件内容） 通过AP Options传递给注解处理器（这里是指的真正的业务注解处理器）
+
+值得注意的是，resolve compileClasspath是不允许在configure阶段进行的，所以上面的步骤需要在一个Gradle Task中进行。一般通过Extension配置AP options必须在configure阶段进行。这里有两种方案处理：
+
+.在Task中设置AP option的方法
+. 在extension中使用lazy value配置
+. 不通过extension配置，而是直接修改相关Task（JavaCompile，KaptTask或ProcessAnnotationsTask）的property
+
+关于为什么配置AP options需要如此复杂，可以参考 link:2019-07-11-gradle-extension-reactive[Why Gradle Extension Should be Reactive]。另外此库也提供了适配多种环境的AP Options注册的API。
+
+## Implmentation
+
+Incubating.
+
