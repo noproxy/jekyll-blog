@@ -1,11 +1,10 @@
 <!DOCTYPE html><html lang="en">
   <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Home - No Proxy's Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Annotations Processing in Gradle Multi-Project Build - No Proxy's Blog</title>
 
-<meta name="description" content="Noproxy's blog. Mainly about Gradle and Android.
-">
-<link rel="canonical" href="https://noproxy.github.io/"><link rel="alternate" type="application/rss+xml" title="No Proxy's Blog" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ -->
+<meta name="description" content="在通常情况下，一个gradle项目往往由多个project组成，也就是multi-project build。以一个android项目为例：Example Multi-project Build├ app/├ build.gradle├── feature/├── build.gradle└ settings.g...">
+<link rel="canonical" href="https://noproxy.github.io/2019/07/09/gradle-multi-project-annotations-processing.html"><link rel="alternate" type="application/rss+xml" title="No Proxy's Blog" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ -->
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -258,7 +257,7 @@
 </script></head>
   <body>
     <div class="root" data-is-touch="false">
-      <div class="layout--page js-page-root"><div class="page__main js-page-main page__viewport cell cell--auto">
+      <div class="layout--page js-page-root"><div class="page__main js-page-main page__viewport has-aside cell cell--auto">
 
       <div class="page__main-inner"><div class="page__header d-print-none"><header class="header"><div class="main">
       <div class="header__title">
@@ -278,13 +277,20 @@
   </header>
 </div><div class="page__content"><div class ="main"><div class="grid grid--reverse">
 
-              <div class="col-aside d-print-none js-col-aside"></div>
+              <div class="col-aside d-print-none js-col-aside"><aside class="page__aside js-page-aside"><div class="toc-aside js-toc-root"></div></aside></div>
 
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
-<!-- end custom main top snippet --><article itemscope itemtype="http://schema.org/WebPage"><header style="display:none;"><h1>Home</h1></header><meta itemprop="headline" content="Home"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><div class="js-article-content"><div class="layout--articles"><div class="article-list items items--divided"><article class="item" itemscope itemtype="http://schema.org/BlogPosting"><div class="item__content">
-          <header><a href="/2019/07/09/gradle-multi-project-annotations-processing.html"><h2 itemprop="headline" class="item__header">Annotations Processing in Gradle Multi-Project Build</h2></a></header>
-          <div class="item__description"><div class="article__content" itemprop="description articleBody"><div class="paragraph">
+<!-- end custom main top snippet --><article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>Annotations Processing in Gradle Multi-Project Build</h1></header></div><meta itemprop="headline" content="Annotations Processing in Gradle Multi-Project Build"><div class="article__info clearfix"><ul class="left-col menu"><li>
+              <a class="button button--secondary button--pill button--sm"
+                href="/archive.html?tag=gradle">gradle</a>
+            </li></ul><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Jul 09, 2019</span>
+            </li></ul></div><meta itemprop="datePublished" content="2019-07-09T00:00:00+08:00">
+    <meta itemprop="keywords" content="gradle"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
+
+<!-- end custom article top snippet --><div class="article__content" itemprop="articleBody"><div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
 <p>在通常情况下，一个gradle项目往往由多个project组成，也就是multi-project build。</p>
 </div>
 <div class="paragraph">
@@ -305,98 +311,242 @@
 </div>
 <div class="paragraph">
 <p>但实际上，JSR 269描述的注解处理并不能处理如此复杂的场景。<code>编译时</code> 注解处理是运行在<strong>代码编译</strong>（javac）阶段，而在Gradle的multi-project build中，多个project之前的依赖传递，使用的是已经编译的classes.jar。这在根本上造成了gradle multi-project build与APT的不兼容。</p>
-</div></div><p><a href="/2019/07/09/gradle-multi-project-annotations-processing.html">Read more</a></p></div><div class="article__info clearfix"><ul class="left-col menu"><li>
-              <a class="button button--secondary button--pill button--sm"
-                href="/archive.html?tag=gradle">gradle</a>
-            </li></ul><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Jul 09, 2019</span>
-            </li></ul></div><meta itemprop="datePublished" content="2019-07-09T00:00:00+08:00">
-    <meta itemprop="keywords" content="gradle"></div>
-      </article><article class="item" itemscope itemtype="http://schema.org/BlogPosting"><div class="item__content">
-          <header><a href="/2019/07/05/tips-mac-disk-clean.html"><h2 itemprop="headline" class="item__header">如何清理Mac磁盘空间</h2></a></header>
-          <div class="item__description"><div class="article__content" itemprop="description articleBody"><div class="sect1">
-<h2 id="清理的原因">清理的原因</h2>
+</div>
+<div class="paragraph">
+<p>通俗的说，注解处理器可以在feature编译的时候处理feature里的注解，也可以在app编译的时候处理app里面的注解。但是想在app编译的时候处理去feature里面的注解是不可能的。更准确的说，在app的processor里:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>无法通过 <code>RoundEnvironment</code> 获取任何feature项目中源码的信息</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>实际上，不仅是feature里的注解信息无法获取，任何Maven依赖、jar依赖里的注解信息也是无法处理的。</p>
+</div>
+<div class="paragraph">
+<p>编译时注解处理的原理决定了只靠JSR 269的API是无法在multi-project build下进行注解处理的。而运行时注解处理不会在编译时做任何事，运行时可见的类都可以处理，所以有些框架（比如retrofit）虽然使用了注解，但是不会受这个问题困扰。</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="workaround">WorkAround</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>虽然JSR 269提供的能力不足以解决问题，但借助与Gradle的依赖传递机制，我们可以通过Gradle Plugin来解决mulit-project build时注解处理的问题。</p>
+</div>
+<div class="paragraph">
+<p>一个最简单的思路就是：
+. 在feature编译时，通过AST遍历或者注解处理将所有注解信息记录在一个文件里，比如extra_annotations.json
+. 在app编译之前，通过Gradle的依赖传递，收集所有依赖的extra_annotations.json，并传递给processor（通过注解处理参数，即ap option）
+. 在app编译时，app的processor除了处理APT提供的注解信息外，还需要处理2中提供的额外信息</p>
+</div>
+<div class="paragraph">
+<p>值得注意的是，在1中记录注解信息，将是3中能使用的全部信息。例如：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="java"><span></span><span class="tok-kn">package</span> <span class="tok-nn">org.example</span><span class="tok-o">;</span>
+
+<span class="tok-nd">@Foo</span><span class="tok-o">(</span><span class="tok-n">value</span> <span class="tok-o">=</span> <span class="tok-s">&quot;demo&quot;</span><span class="tok-o">)</span>
+<span class="tok-kd">public</span> <span class="tok-kd">class</span> <span class="tok-nc">Bar</span> <span class="tok-kd">extends</span> <span class="tok-n">Baz</span> <span class="tok-o">{</span>
+
+<span class="tok-o">}</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>在步骤1中记录时，只保存了被注解标注的class的CanonicalName(<code>org.example.Bar</code>)，而没有记录@Foo注解的Value的值。那么在步骤3中，注解处理器就再也拿不到这个信息了。如之前所说，依赖里的编译时信息，都是无法再通过 <code>RoundEnvironment</code> 获取了。</p>
+</div>
+<div class="paragraph">
+<p>不过，<code>ProcessingEnvironment</code> 是编译环境信息（不是<strong>编译时</strong>），所以按理来说，通过 <code>ProcessingEnvironment.getElementUtils()</code> 和 <code>ProcessingEnvironment.getTypeUtils</code> 获取信息是可以的，只要classpath中存在相关信息即可。</p>
+</div>
+<div class="paragraph">
+<p>所以用下面方式查询 <code>org.example.Bar</code> 的超类是可以的：</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>尚未确认</p>
+</div>
+</blockquote>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="pygments highlight"><code data-lang="java"><span></span><span class="tok-c1">// expect to &#39;org.example.Baz&#39;</span>
+<span class="tok-n">TypeMirror</span> <span class="tok-n">superClass</span> <span class="tok-o">=</span> <span class="tok-n">env</span><span class="tok-o">.</span><span class="tok-na">getElementUtils</span><span class="tok-o">().</span><span class="tok-na">getTypeElement</span><span class="tok-o">(</span><span class="tok-s">&quot;org.example.Bar&quot;</span><span class="tok-o">).</span><span class="tok-na">getSuperclass</span><span class="tok-o">()</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="details">Details</h2>
 <div class="sectionbody">
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>硬盘不够用</p>
+<p>在feature编译时，通过AST遍历或者注解处理将所有注解信息记录在一个文件里，比如extra_annotations.json</p>
 </li>
 <li>
-<p>电脑运行时会产生大量的垃圾，并且其中很大部分不会被自动删除</p>
+<p>在app编译之前，通过Gradle的依赖传递，收集所有依赖的extra_annotations.json，并传递给processor（通过注解处理参数，即ap option）</p>
+</li>
+<li>
+<p>在app编译时，app的processor除了处理APT提供的注解信息外，还需要处理2中提供的额外信息</p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>下面是典型的几种产生不会自动被删除的数据的原因：</p>
+<p>下面详细讲解方案的实现模块。</p>
 </div>
 <div class="sect2">
-<h3 id="app被卸载了但配置数据和缓存没有被删除">.1. App被卸载了，但配置、数据和缓存没有被删除</h3>
-
-</div>
-</div>
-</div></div><p><a href="/2019/07/05/tips-mac-disk-clean.html">Read more</a></p></div><div class="article__info clearfix"><ul class="left-col menu"><li>
-              <a class="button button--secondary button--pill button--sm"
-                href="/archive.html?tag=tips">tips</a>
-            </li></ul><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Jul 05, 2019</span>
-            </li></ul></div><meta itemprop="datePublished" content="2019-07-05T00:00:00+08:00">
-    <meta itemprop="keywords" content="tips"></div>
-      </article><article class="item" itemscope itemtype="http://schema.org/BlogPosting"><div class="item__content">
-          <header><a href="/2019/07/05/gradle-issue-01.html"><h2 itemprop="headline" class="item__header">ClassNotFoundException when Run Checkstyle Task by TestKit</h2></a></header>
-          <div class="item__description"><div class="article__content" itemprop="description articleBody"><div class="sect1">
-<h2 id="context">Context</h2>
-<div class="sectionbody">
+<h3 id="recording-annotation-processor">Recording Annotation Processor</h3>
 <div class="paragraph">
-<p>I was writing a test for my init script which adds the checkstyle plugin and config files. The test
-code is shown as below.</p>
-</div>
-</div>
-</div></div><p><a href="/2019/07/05/gradle-issue-01.html">Read more</a></p></div><div class="article__info clearfix"><ul class="left-col menu"><li>
-              <a class="button button--secondary button--pill button--sm"
-                href="/archive.html?tag=gradle">gradle</a>
-            </li></ul><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Jul 05, 2019</span>
-            </li></ul></div><meta itemprop="datePublished" content="2019-07-05T00:00:00+08:00">
-    <meta itemprop="keywords" content="gradle"></div>
-      </article><article class="item" itemscope itemtype="http://schema.org/BlogPosting"><div class="item__content">
-          <header><a href="/2019/07/01/gradle-discovery-dependencies.html"><h2 itemprop="headline" class="item__header">如何使用Gradle API获取项目的依赖信息</h2></a></header>
-          <div class="item__description"><div class="article__content" itemprop="description articleBody"><div class="paragraph">
-<p>有时我们会想开发一个插件或者gradle script获取当前项目的依赖。在不了解gradle的api的情况下，可能会用解析build.gradle文件的笨办法方式去分析，但其实这种方式很不靠谱。</p>
-</div>
-<div class="paragraph">
-<p>Gradle本身提供了全面的API获取项目的依赖信息，利用这个API，你可以查询：</p>
+<p>一个将所有注解的信息存在一个文件的注解处理器。它需要：</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>用户在build.gradle里声明的显式依赖</p>
+<p>从AP options读取输出文件要保存的路径</p>
 </li>
 <li>
-<p>因为传递依赖（transitive dependency）被隐式引入的依赖</p>
+<p>通过 <code>@SupportedAnnotationTypes("*")</code> 来处理所有的注解；</p>
 </li>
 <li>
-<p>经过解析后，最终被采用的依赖</p>
-</li>
-<li>
-<p>经过解析后，解析失败的依赖</p>
+<p>将注解信息序列化保存到文件，json、xml、protobuffer等能储存树的格式都可以；</p>
 </li>
 </ol>
-</div></div><p><a href="/2019/07/01/gradle-discovery-dependencies.html">Read more</a></p></div><div class="article__info clearfix"><ul class="left-col menu"><li>
-              <a class="button button--secondary button--pill button--sm"
-                href="/archive.html?tag=gradle">gradle</a>
-            </li><li>
-              <a class="button button--secondary button--pill button--sm"
-                href="/archive.html?tag=tips">tips</a>
-            </li></ul><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Jul 01, 2019</span>
-            </li></ul></div><meta itemprop="datePublished" content="2019-07-01T00:00:00+08:00">
-    <meta itemprop="keywords" content="gradle,tips"></div>
-      </article></div>
-</div><div class="layout--home"></div>
-<script>/*(function () {
+</div>
+</div>
+<div class="sect2">
+<h3 id="gradle-plugin-for-producer">Gradle Plugin for Producer</h3>
+<div class="paragraph">
+<p>一个apply到所有producer（被依赖的）项目的Gradle插件。在android中，一般是使用了 <code>com.android.library</code> 或 <code>java-library</code> 插件的项目。它需要：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>在module中注册recording annotation processor</p>
+</li>
+<li>
+<p>通过AP option向processor传递生成的文件的路径</p>
+</li>
+<li>
+<p>注册一个Configuration：</p>
+<div class="ulist">
+<ul>
+<li>
+<p>设置CanBeConsumed = true, CanBeResolved = false</p>
+</li>
+<li>
+<p>Artifacts Attributes中，设置ArtifactType=EXTRA_ANNOTATIONS</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>将processor的产物，注册为这个Configuration的一个PublishArtifact</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>如果要支持variant-aware，上面的步骤需要为每一个variant创建一套单独的。同时，创建的configuration也需要在Artifacts Attributes中，设置variantType为对应的值。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="gradle-plugin-for-consumer">Gradle Plugin for Consumer</h3>
+<div class="paragraph">
+<p>一个apply到所有consumer项目的Gradle插件。在android中，一般是使用了 <code>com.android.application</code> 插件的项目。它需要：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>通过artifactView API从CompileClasspath获取所有ArtifactType=EXTRA_ANNOTATIONS的文件</p>
+</li>
+<li>
+<p>将上面的文件（或文件内容） 通过AP Options传递给注解处理器（这里是指的真正的业务注解处理器）</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>值得注意的是，resolve compileClasspath是不允许在configure阶段进行的，所以上面的步骤需要在一个Gradle Task中进行。一般通过Extension配置AP options必须在configure阶段进行。这里有两种方案处理：</p>
+</div>
+<div class="olist arabic">
+<div class="title">在Task中设置AP option的方法</div>
+<ol class="arabic">
+<li>
+<p>在extension中使用lazy value配置</p>
+</li>
+<li>
+<p>不通过extension配置，而是直接修改相关Task（JavaCompile，KaptTask或ProcessAnnotationsTask）的property</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>关于为什么配置AP options需要如此复杂，可以参考 <a href="2019-07-11-gradle-extension-reactive">Why Gradle Extension Should be Reactive</a>。另外此库也提供了适配多种环境的AP Options注册的API。</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="implmentation">Implmentation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Incubating.</p>
+</div>
+</div>
+</div></div><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2019-07-09T00:00:00+08:00"><!-- start custom article footer snippet -->
 
-})();*/
-</script>
+<!-- end custom article footer snippet --><div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/feed.xml">Subscribe</a></div></div><div class="article__license"><div class="license">
+    <p>This work is licensed under a <a itemprop="license" rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> license.
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">
+        <img alt="Attribution-NonCommercial 4.0 International" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" />
+      </a>
+    </p>
+  </div></div></footer><div class="article__section-navigator clearfix"><div class="previous"><span>PREVIOUS</span><a href="/2019/07/05/tips-mac-disk-clean.html">如何清理Mac磁盘空间</a></div></div></div>
 
+</div>
 
-</div><section class="page__comments d-print-none"></section></article><!-- start custom main bottom snippet -->
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    $(function() {
+      var $this ,$scroll;
+      var $articleContent = $('.js-article-content');
+      var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+      var scroll = hasSidebar ? '.js-page-main' : 'html, body';
+      $scroll = $(scroll);
+
+      $articleContent.find('.highlight').each(function() {
+        $this = $(this);
+        $this.attr('data-lang', $this.find('code').attr('data-lang'));
+      });
+      $articleContent.find('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]').each(function() {
+        $this = $(this);
+        $this.append($('<a class="anchor d-print-none" aria-hidden="true"></a>').html('<i class="fas fa-anchor"></i>'));
+      });
+      $articleContent.on('click', '.anchor', function() {
+        $scroll.scrollToAnchor('#' + $(this).parent().attr('id'), 400);
+      });
+    });
+  });
+})();
+</script></div><section class="page__comments d-print-none"><div id="disqus_thread"></div>
+  <script>
+  /**
+  *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+  *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+  var disqus_config = function () {
+    this.page.url = 'https://noproxy.github.io/2019/07/09/gradle-multi-project-annotations-processing.html';
+    this.page.identifier = 'gradle-multi-project-annotations-processing';
+  };
+  (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://noproxy.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+  })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></section></article><!-- start custom main bottom snippet -->
 
 <!-- end custom main bottom snippet --></div>
             </div></div></div><div class="page__footer d-print-none">
@@ -940,6 +1090,68 @@ window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
 /*(function () {
 
 })();*/
+</script><script>
+  /* toc must before affix, since affix need to konw toc' height. */(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  var TOC_SELECTOR = window.TEXT_VARIABLES.site.toc.selectors;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $window = $(window);
+    var $articleContent = $('.js-article-content');
+    var $tocRoot = $('.js-toc-root'), $col2 = $('.js-col-aside');
+    var toc;
+    var tocDisabled = false;
+    var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+    var hasToc = $articleContent.find(TOC_SELECTOR).length > 0;
+
+    function disabled() {
+      return $col2.css('display') === 'none' || !hasToc;
+    }
+
+    tocDisabled = disabled();
+
+    toc = $tocRoot.toc({
+      selectors: TOC_SELECTOR,
+      container: $articleContent,
+      scrollTarget: hasSidebar ? '.js-page-main' : null,
+      scroller: hasSidebar ? '.js-page-main' : null,
+      disabled: tocDisabled
+    });
+
+    $window.on('resize', window.throttle(function() {
+      tocDisabled = disabled();
+      toc && toc.setOptions({
+        disabled: tocDisabled
+      });
+    }, 100));
+
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $window = $(window), $pageFooter = $('.js-page-footer');
+    var $pageAside = $('.js-page-aside');
+    var affix;
+    var tocDisabled = false;
+    var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+
+    affix = $pageAside.affix({
+      offsetBottom: $pageFooter.outerHeight(),
+      scrollTarget: hasSidebar ? '.js-page-main' : null,
+      scroller: hasSidebar ? '.js-page-main' : null,
+      scroll: hasSidebar ? $('.js-page-main').children() : null,
+      disabled: tocDisabled
+    });
+
+    $window.on('resize', window.throttle(function() {
+      affix && affix.setOptions({
+        disabled: tocDisabled
+      });
+    }, 100));
+
+    window.pageAsideAffix = affix;
+  });
+})();
 </script>
     </div>
     <script>(function () {
