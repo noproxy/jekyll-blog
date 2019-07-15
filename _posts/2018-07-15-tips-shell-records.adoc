@@ -1,0 +1,11 @@
+= Useful Shell Command Records
+
+
+== Find
+
+[source,bash]
+----
+# search all borken symbol link
+find -L /path -type l
+----
+

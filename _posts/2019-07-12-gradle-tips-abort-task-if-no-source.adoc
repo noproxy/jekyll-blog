@@ -1,0 +1,24 @@
+= Gradle实现Task没有源码时强制报错
+:page-key: gradle-tips-abort-task-if-no-source
+:page-tags: [gradle, tips]
+
+Gradle Slack中有人提问，如何实现，在task因为没有源码输入（即NO—SOURCE）时，强制报错，而不是跳过执行task。
+
+这个可以通过 `org.gradle.api.execution.TaskExecutionListener` 来实现。范例如下：
+
+[source,groovy]
+----
+gradle.taskGraph.addTaskExecutionListener(new TaskExecutionListener() {
+    @Override
+    void beforeExecute(Task task) {
+
+    }
+
+    @Override
+    void afterExecute(Task task, TaskState state) {
+        if (state.noSource && task.name == "foo") {
+            throw new IllegalArgumentException("task foo has no source!")
+        }
+    }
+})
+----
