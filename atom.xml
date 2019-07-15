@@ -4,13 +4,43 @@
  <title>No Proxy's Blog</title>
  <link href="https://noproxy.github.io/atom.xml" rel="self"/>
  <link href="https://noproxy.github.io/"/>
- <updated>2019-07-09T19:00:12+08:00</updated>
+ <updated>2019-07-15T11:58:37+08:00</updated>
  <id>https://noproxy.github.io</id>
  <author>
    <name>noproxy</name>
    <email>toxzcp@gmail.com</email>
  </author>
 
+ 
+ <entry>
+   <title>Gradle实现Task没有源码时强制报错</title>
+   <link href="https://noproxy.github.io/2019/07/12/gradle-tips-abort-task-if-no-source.html"/>
+   <updated>2019-07-12T00:00:00+08:00</updated>
+   <id>https://noproxy.github.io/2019/07/12/gradle-tips-abort-task-if-no-source</id>
+   <content type="html">&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Gradle Slack中有人提问，如何实现，在task因为没有源码输入（即NO—SOURCE）时，强制报错，而不是跳过执行task。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;这个可以通过 &lt;code&gt;org.gradle.api.execution.TaskExecutionListener&lt;/code&gt; 来实现。范例如下：&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;pygments highlight&quot;&gt;&lt;code data-lang=&quot;groovy&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;tok-n&quot;&gt;gradle&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;tok-na&quot;&gt;taskGraph&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;tok-na&quot;&gt;addTaskExecutionListener&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;tok-k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;tok-n&quot;&gt;TaskExecutionListener&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;tok-o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;tok-nd&quot;&gt;@Override&lt;/span&gt;
+    &lt;span class=&quot;tok-kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;tok-nf&quot;&gt;beforeExecute&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;tok-n&quot;&gt;Task&lt;/span&gt; &lt;span class=&quot;tok-n&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;tok-o&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;tok-o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;tok-nd&quot;&gt;@Override&lt;/span&gt;
+    &lt;span class=&quot;tok-kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;tok-nf&quot;&gt;afterExecute&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;tok-n&quot;&gt;Task&lt;/span&gt; &lt;span class=&quot;tok-n&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;tok-n&quot;&gt;TaskState&lt;/span&gt; &lt;span class=&quot;tok-n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;tok-o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;tok-k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;tok-o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;tok-n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;tok-na&quot;&gt;noSource&lt;/span&gt; &lt;span class=&quot;tok-o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;tok-n&quot;&gt;task&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;tok-na&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;tok-o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;tok-s2&quot;&gt;&amp;quot;foo&amp;quot;&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;tok-o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;tok-k&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;tok-k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;tok-nf&quot;&gt;IllegalArgumentException&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;tok-s2&quot;&gt;&amp;quot;task foo has no source!&amp;quot;&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;tok-o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;tok-o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;tok-o&quot;&gt;})&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;</content>
+ </entry>
  
  <entry>
    <title>Annotations Processing in Gradle Multi-Project Build</title>
@@ -1078,6 +1108,24 @@ So the parent find and try to define class &lt;code&gt;org.gradle.api.AntBuilder
 &lt;/div&gt;
 &lt;noscript&gt;&lt;pre&gt;400: Invalid request
 &lt;/pre&gt;&lt;/noscript&gt;&lt;script src=&quot;https://gist.github.com/c6bc77cc0f4ff9876eb1b04a491578d7.js&quot;&gt; &lt;/script&gt;
+&lt;/div&gt;
+&lt;/div&gt;</content>
+ </entry>
+ 
+ <entry>
+   <title>Useful Shell Command Records</title>
+   <link href="https://noproxy.github.io/2018/07/15/tips-shell-records.html"/>
+   <updated>2018-07-15T00:00:00+08:00</updated>
+   <id>https://noproxy.github.io/2018/07/15/tips-shell-records</id>
+   <content type="html">&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;find&quot;&gt;Find&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;pygments highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;tok-c1&quot;&gt;# search all borken symbol link&lt;/span&gt;
+find -L /path -type l&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;</content>
  </entry>

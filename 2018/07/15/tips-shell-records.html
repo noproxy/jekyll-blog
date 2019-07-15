@@ -1,11 +1,10 @@
 <!DOCTYPE html><html lang="en">
   <head><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Home - No Proxy's Blog</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"><title>Useful Shell Command Records - No Proxy's Blog</title>
 
-<meta name="description" content="Noproxy's blog. Mainly about Gradle and Android.
-">
-<link rel="canonical" href="https://noproxy.github.io/"><link rel="alternate" type="application/rss+xml" title="No Proxy's Blog" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ -->
+<meta name="description" content="Find# search all borken symbol linkfind -L /path -type l">
+<link rel="canonical" href="https://noproxy.github.io/2018/07/15/tips-shell-records.html"><link rel="alternate" type="application/rss+xml" title="No Proxy's Blog" href="/feed.xml"><!-- start favicons snippet, use https://realfavicongenerator.net/ -->
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
@@ -258,7 +257,7 @@
 </script></head>
   <body>
     <div class="root" data-is-touch="false">
-      <div class="layout--page js-page-root"><div class="page__main js-page-main page__viewport cell cell--auto">
+      <div class="layout--page js-page-root"><div class="page__main js-page-main page__viewport has-aside cell cell--auto">
 
       <div class="page__main-inner"><div class="page__header d-print-none"><header class="header"><div class="main">
       <div class="header__title">
@@ -278,152 +277,14 @@
   </header>
 </div><div class="page__content"><div class ="main"><div class="grid grid--reverse">
 
-              <div class="col-aside d-print-none js-col-aside"></div>
+              <div class="col-aside d-print-none js-col-aside"><aside class="page__aside js-page-aside"><div class="toc-aside js-toc-root"></div></aside></div>
 
               <div class="col-main cell cell--auto"><!-- start custom main top snippet -->
 
-<!-- end custom main top snippet --><article itemscope itemtype="http://schema.org/WebPage"><header style="display:none;"><h1>Home</h1></header><meta itemprop="headline" content="Home"><div class="article__info clearfix"><ul class="right-col menu"></ul></div><div class="js-article-content"><div class="layout--articles"><div class="article-list items items--divided"><article class="item" itemscope itemtype="http://schema.org/BlogPosting"><div class="item__content">
-          <header><a href="/2019/07/12/gradle-tips-abort-task-if-no-source.html"><h2 itemprop="headline" class="item__header">Gradle实现Task没有源码时强制报错</h2></a></header>
-          <div class="item__description"><div class="article__content" itemprop="description articleBody"><div class="paragraph">
-<p>Gradle Slack中有人提问，如何实现，在task因为没有源码输入（即NO—SOURCE）时，强制报错，而不是跳过执行task。</p>
-</div>
-<div class="paragraph">
-<p>这个可以通过 <code>org.gradle.api.execution.TaskExecutionListener</code> 来实现。范例如下：</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="pygments highlight"><code data-lang="groovy"><span></span><span class="tok-n">gradle</span><span class="tok-o">.</span><span class="tok-na">taskGraph</span><span class="tok-o">.</span><span class="tok-na">addTaskExecutionListener</span><span class="tok-o">(</span><span class="tok-k">new</span> <span class="tok-n">TaskExecutionListener</span><span class="tok-o">()</span> <span class="tok-o">{</span>
-    <span class="tok-nd">@Override</span>
-    <span class="tok-kt">void</span> <span class="tok-nf">beforeExecute</span><span class="tok-o">(</span><span class="tok-n">Task</span> <span class="tok-n">task</span><span class="tok-o">)</span> <span class="tok-o">{</span>
+<!-- end custom main top snippet --><article itemscope itemtype="http://schema.org/Article"><div class="article__header"><header><h1>Useful Shell Command Records</h1></header></div><meta itemprop="headline" content="Useful Shell Command Records"><div class="article__info clearfix"><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Jul 15, 2018</span>
+            </li></ul></div><meta itemprop="datePublished" content="2018-07-15T00:00:00+08:00"><div class="js-article-content"><div class="layout--article"><!-- start custom article top snippet -->
 
-    <span class="tok-o">}</span>
-
-    <span class="tok-nd">@Override</span>
-    <span class="tok-kt">void</span> <span class="tok-nf">afterExecute</span><span class="tok-o">(</span><span class="tok-n">Task</span> <span class="tok-n">task</span><span class="tok-o">,</span> <span class="tok-n">TaskState</span> <span class="tok-n">state</span><span class="tok-o">)</span> <span class="tok-o">{</span>
-        <span class="tok-k">if</span> <span class="tok-o">(</span><span class="tok-n">state</span><span class="tok-o">.</span><span class="tok-na">noSource</span> <span class="tok-o">&amp;&amp;</span> <span class="tok-n">task</span><span class="tok-o">.</span><span class="tok-na">name</span> <span class="tok-o">==</span> <span class="tok-s2">&quot;foo&quot;</span><span class="tok-o">)</span> <span class="tok-o">{</span>
-            <span class="tok-k">throw</span> <span class="tok-k">new</span> <span class="tok-nf">IllegalArgumentException</span><span class="tok-o">(</span><span class="tok-s2">&quot;task foo has no source!&quot;</span><span class="tok-o">)</span>
-        <span class="tok-o">}</span>
-    <span class="tok-o">}</span>
-<span class="tok-o">})</span></code></pre>
-</div>
-</div></div><p><a href="/2019/07/12/gradle-tips-abort-task-if-no-source.html">Read more</a></p></div><div class="article__info clearfix"><ul class="left-col menu"><li>
-              <a class="button button--secondary button--pill button--sm"
-                href="/archive.html?tag=gradle">gradle</a>
-            </li><li>
-              <a class="button button--secondary button--pill button--sm"
-                href="/archive.html?tag=tips">tips</a>
-            </li></ul><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Jul 12, 2019</span>
-            </li></ul></div><meta itemprop="datePublished" content="2019-07-12T00:00:00+08:00">
-    <meta itemprop="keywords" content="gradle,tips"></div>
-      </article><article class="item" itemscope itemtype="http://schema.org/BlogPosting"><div class="item__content">
-          <header><a href="/2019/07/09/gradle-multi-project-annotations-processing.html"><h2 itemprop="headline" class="item__header">Annotations Processing in Gradle Multi-Project Build</h2></a></header>
-          <div class="item__description"><div class="article__content" itemprop="description articleBody"><div class="paragraph">
-<p>在通常情况下，一个gradle项目往往由多个project组成，也就是multi-project build。</p>
-</div>
-<div class="paragraph">
-<p>以一个android项目为例：</p>
-</div>
-<div class="listingblock">
-<div class="title">Example Multi-project Build</div>
-<div class="content">
-<pre>├ app/
-├ build.gradle
-├── feature/
-├── build.gradle
-└ settings.gradle</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>在使用一些注解处理工具时，如dagger2、room等，注解的使用可能存在于任意的project中。但最终注解处理，需要在最顶层的app项目中，一些特定的类必须在app中生成，并且生成时也必须能获取到依赖的project feature中的注解。</p>
-</div>
-<div class="paragraph">
-<p>但实际上，JSR 269描述的注解处理并不能处理如此复杂的场景。<code>编译时</code> 注解处理是运行在<strong>代码编译</strong>（javac）阶段，而在Gradle的multi-project build中，多个project之前的依赖传递，使用的是已经编译的classes.jar。这在根本上造成了gradle multi-project build与APT的不兼容。</p>
-</div></div><p><a href="/2019/07/09/gradle-multi-project-annotations-processing.html">Read more</a></p></div><div class="article__info clearfix"><ul class="left-col menu"><li>
-              <a class="button button--secondary button--pill button--sm"
-                href="/archive.html?tag=gradle">gradle</a>
-            </li></ul><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Jul 09, 2019</span>
-            </li></ul></div><meta itemprop="datePublished" content="2019-07-09T00:00:00+08:00">
-    <meta itemprop="keywords" content="gradle"></div>
-      </article><article class="item" itemscope itemtype="http://schema.org/BlogPosting"><div class="item__content">
-          <header><a href="/2019/07/05/tips-mac-disk-clean.html"><h2 itemprop="headline" class="item__header">如何清理Mac磁盘空间</h2></a></header>
-          <div class="item__description"><div class="article__content" itemprop="description articleBody"><div class="sect1">
-<h2 id="清理的原因">清理的原因</h2>
-<div class="sectionbody">
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>硬盘不够用</p>
-</li>
-<li>
-<p>电脑运行时会产生大量的垃圾，并且其中很大部分不会被自动删除</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>下面是典型的几种产生不会自动被删除的数据的原因：</p>
-</div>
-<div class="sect2">
-<h3 id="app被卸载了但配置数据和缓存没有被删除">.1. App被卸载了，但配置、数据和缓存没有被删除</h3>
-
-</div>
-</div>
-</div></div><p><a href="/2019/07/05/tips-mac-disk-clean.html">Read more</a></p></div><div class="article__info clearfix"><ul class="left-col menu"><li>
-              <a class="button button--secondary button--pill button--sm"
-                href="/archive.html?tag=tips">tips</a>
-            </li></ul><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Jul 05, 2019</span>
-            </li></ul></div><meta itemprop="datePublished" content="2019-07-05T00:00:00+08:00">
-    <meta itemprop="keywords" content="tips"></div>
-      </article><article class="item" itemscope itemtype="http://schema.org/BlogPosting"><div class="item__content">
-          <header><a href="/2019/07/05/gradle-issue-01.html"><h2 itemprop="headline" class="item__header">ClassNotFoundException when Run Checkstyle Task by TestKit</h2></a></header>
-          <div class="item__description"><div class="article__content" itemprop="description articleBody"><div class="sect1">
-<h2 id="context">Context</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>I was writing a test for my init script which adds the checkstyle plugin and config files. The test
-code is shown as below.</p>
-</div>
-</div>
-</div></div><p><a href="/2019/07/05/gradle-issue-01.html">Read more</a></p></div><div class="article__info clearfix"><ul class="left-col menu"><li>
-              <a class="button button--secondary button--pill button--sm"
-                href="/archive.html?tag=gradle">gradle</a>
-            </li></ul><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Jul 05, 2019</span>
-            </li></ul></div><meta itemprop="datePublished" content="2019-07-05T00:00:00+08:00">
-    <meta itemprop="keywords" content="gradle"></div>
-      </article><article class="item" itemscope itemtype="http://schema.org/BlogPosting"><div class="item__content">
-          <header><a href="/2019/07/01/gradle-discovery-dependencies.html"><h2 itemprop="headline" class="item__header">如何使用Gradle API获取项目的依赖信息</h2></a></header>
-          <div class="item__description"><div class="article__content" itemprop="description articleBody"><div class="paragraph">
-<p>有时我们会想开发一个插件或者gradle script获取当前项目的依赖。在不了解gradle的api的情况下，可能会用解析build.gradle文件的笨办法方式去分析，但其实这种方式很不靠谱。</p>
-</div>
-<div class="paragraph">
-<p>Gradle本身提供了全面的API获取项目的依赖信息，利用这个API，你可以查询：</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>用户在build.gradle里声明的显式依赖</p>
-</li>
-<li>
-<p>因为传递依赖（transitive dependency）被隐式引入的依赖</p>
-</li>
-<li>
-<p>经过解析后，最终被采用的依赖</p>
-</li>
-<li>
-<p>经过解析后，解析失败的依赖</p>
-</li>
-</ol>
-</div></div><p><a href="/2019/07/01/gradle-discovery-dependencies.html">Read more</a></p></div><div class="article__info clearfix"><ul class="left-col menu"><li>
-              <a class="button button--secondary button--pill button--sm"
-                href="/archive.html?tag=gradle">gradle</a>
-            </li><li>
-              <a class="button button--secondary button--pill button--sm"
-                href="/archive.html?tag=tips">tips</a>
-            </li></ul><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Jul 01, 2019</span>
-            </li></ul></div><meta itemprop="datePublished" content="2019-07-01T00:00:00+08:00">
-    <meta itemprop="keywords" content="gradle,tips"></div>
-      </article><article class="item" itemscope itemtype="http://schema.org/BlogPosting"><div class="item__content">
-          <header><a href="/2018/07/15/tips-shell-records.html"><h2 itemprop="headline" class="item__header">Useful Shell Command Records</h2></a></header>
-          <div class="item__description"><div class="article__content" itemprop="description articleBody"><div class="sect1">
+<!-- end custom article top snippet --><div class="article__content" itemprop="articleBody"><div class="sect1">
 <h2 id="find">Find</h2>
 <div class="sectionbody">
 <div class="listingblock">
@@ -433,17 +294,43 @@ find -L /path -type l</code></pre>
 </div>
 </div>
 </div>
-</div></div><p><a href="/2018/07/15/tips-shell-records.html">Read more</a></p></div><div class="article__info clearfix"><ul class="right-col menu"><li><i class="far fa-calendar-alt"></i> <span>Jul 15, 2018</span>
-            </li></ul></div><meta itemprop="datePublished" content="2018-07-15T00:00:00+08:00"></div>
-      </article></div>
-</div><div class="layout--home"></div>
-<script>/*(function () {
+</div></div><div class="d-print-none"><footer class="article__footer"><meta itemprop="dateModified" content="2018-07-15T00:00:00+08:00"><!-- start custom article footer snippet -->
 
-})();*/
-</script>
+<!-- end custom article footer snippet --><div class="article__subscribe"><div class="subscribe"><i class="fas fa-rss"></i> <a type="application/rss+xml" href="/feed.xml">Subscribe</a></div></div><div class="article__license"><div class="license">
+    <p>This work is licensed under a <a itemprop="license" rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">Attribution-NonCommercial 4.0 International</a> license.
+      <a rel="license" href="https://creativecommons.org/licenses/by-nc/4.0/">
+        <img alt="Attribution-NonCommercial 4.0 International" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" />
+      </a>
+    </p>
+  </div></div></footer><div class="article__section-navigator clearfix"><div class="next"><span>NEXT</span><a href="/2019/07/01/gradle-discovery-dependencies.html">如何使用Gradle API获取项目的依赖信息</a></div></div></div>
 
+</div>
 
-</div><section class="page__comments d-print-none"></section></article><!-- start custom main bottom snippet -->
+<script>(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    $(function() {
+      var $this ,$scroll;
+      var $articleContent = $('.js-article-content');
+      var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+      var scroll = hasSidebar ? '.js-page-main' : 'html, body';
+      $scroll = $(scroll);
+
+      $articleContent.find('.highlight').each(function() {
+        $this = $(this);
+        $this.attr('data-lang', $this.find('code').attr('data-lang'));
+      });
+      $articleContent.find('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]').each(function() {
+        $this = $(this);
+        $this.append($('<a class="anchor d-print-none" aria-hidden="true"></a>').html('<i class="fas fa-anchor"></i>'));
+      });
+      $articleContent.on('click', '.anchor', function() {
+        $scroll.scrollToAnchor('#' + $(this).parent().attr('id'), 400);
+      });
+    });
+  });
+})();
+</script></div><section class="page__comments d-print-none"></section></article><!-- start custom main bottom snippet -->
 
 <!-- end custom main bottom snippet --></div>
             </div></div></div><div class="page__footer d-print-none">
@@ -987,6 +874,68 @@ window.Lazyload.js([SOURCES.jquery, PAHTS.search_js], function() {
 /*(function () {
 
 })();*/
+</script><script>
+  /* toc must before affix, since affix need to konw toc' height. */(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  var TOC_SELECTOR = window.TEXT_VARIABLES.site.toc.selectors;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $window = $(window);
+    var $articleContent = $('.js-article-content');
+    var $tocRoot = $('.js-toc-root'), $col2 = $('.js-col-aside');
+    var toc;
+    var tocDisabled = false;
+    var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+    var hasToc = $articleContent.find(TOC_SELECTOR).length > 0;
+
+    function disabled() {
+      return $col2.css('display') === 'none' || !hasToc;
+    }
+
+    tocDisabled = disabled();
+
+    toc = $tocRoot.toc({
+      selectors: TOC_SELECTOR,
+      container: $articleContent,
+      scrollTarget: hasSidebar ? '.js-page-main' : null,
+      scroller: hasSidebar ? '.js-page-main' : null,
+      disabled: tocDisabled
+    });
+
+    $window.on('resize', window.throttle(function() {
+      tocDisabled = disabled();
+      toc && toc.setOptions({
+        disabled: tocDisabled
+      });
+    }, 100));
+
+  });
+})();
+(function() {
+  var SOURCES = window.TEXT_VARIABLES.sources;
+  window.Lazyload.js(SOURCES.jquery, function() {
+    var $window = $(window), $pageFooter = $('.js-page-footer');
+    var $pageAside = $('.js-page-aside');
+    var affix;
+    var tocDisabled = false;
+    var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
+
+    affix = $pageAside.affix({
+      offsetBottom: $pageFooter.outerHeight(),
+      scrollTarget: hasSidebar ? '.js-page-main' : null,
+      scroller: hasSidebar ? '.js-page-main' : null,
+      scroll: hasSidebar ? $('.js-page-main').children() : null,
+      disabled: tocDisabled
+    });
+
+    $window.on('resize', window.throttle(function() {
+      affix && affix.setOptions({
+        disabled: tocDisabled
+      });
+    }, 100));
+
+    window.pageAsideAffix = affix;
+  });
+})();
 </script>
     </div>
     <script>(function () {
