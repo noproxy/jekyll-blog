@@ -6,9 +6,70 @@
 </description>
     <link>https://noproxy.github.io/</link>
     <atom:link href="https://noproxy.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 15 Jul 2019 12:18:19 +0800</pubDate>
-    <lastBuildDate>Mon, 15 Jul 2019 12:18:19 +0800</lastBuildDate>
+    <pubDate>Tue, 16 Jul 2019 12:34:29 +0800</pubDate>
+    <lastBuildDate>Tue, 16 Jul 2019 12:34:29 +0800</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
+    
+      <item>
+        <title>Git Tips</title>
+        <description>&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;git-proxy&quot;&gt;Git Proxy&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;git-over-https&quot;&gt;Git Over HTTP(s)&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;想让Git使用代理拉取代码，通过设置http.proxy变量来实现目的。可以通过环境变量，也可以使用git config来让它生效。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;可以参考：https://gist.github.com/evantoli/f8c23a37eb3558ab8765&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;在诊断git的网络问题时，可以通过设置 &lt;code&gt;GIT_CURL_VERBOSE&lt;/code&gt; 变量来开启网络请求的详细日志输出，如：&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;pygments highlight&quot;&gt;&lt;code data-lang=&quot;bash&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;tok-nv&quot;&gt;GIT_CURL_VERBOSE&lt;/span&gt;&lt;span class=&quot;tok-o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;tok-m&quot;&gt;2&lt;/span&gt; git pull&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;listingblock&quot;&gt;
+&lt;div class=&quot;content&quot;&gt;
+&lt;pre class=&quot;pygments highlight&quot;&gt;&lt;code data-lang=&quot;fish&quot;&gt;&lt;span&gt;&lt;/span&gt;env GIT_CURL_VERBOSE=2 git pull&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;不过要知道的是，git一般有https和ssh两种访问方式，上述的配置代理以及诊断的方法都只适用于https协议的remote。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;git-over-ssh&quot;&gt;Git Over ssh&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;在git的remote是通过ssh方式访问的时候，既不使用http.proxy变量，也不使用curl进行网络请求。ssh协议（应用层协议为ssh）无法使用http代理（仅支持应用层协议为http的数据）来代理。要想代理ssh协议的请求，就必须：&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;dlist&quot;&gt;
+&lt;dl&gt;
+&lt;dt class=&quot;hdlist1&quot;&gt;通过ssh协议在应用层代理&lt;/dt&gt;
+&lt;dd&gt;
+&lt;p&gt;既然http代理能代理http，那ssh代理也能代理ssh，也就是ssh tunnel。可参考：https://askubuntu.com/questions/311447/how-do-i-ssh-to-machine-a-via-b-in-one-command&lt;/p&gt;
+&lt;/dd&gt;
+&lt;dt class=&quot;hdlist1&quot;&gt;通过socks协议在TCP层代理&lt;/dt&gt;
+&lt;dd&gt;
+&lt;p&gt;socks协议（应用层协议）具备代理任何传输层（tcp，udp等）层数据的能力。所以如果代理服务器支持socks协议，就可以代理ssh请求。这时候需要拦截tcp请求，转发到socks代理。一般转发tcp数据是通过一个virtual network interface及iptable规则实现。更高级的实现可以直接使用netcat(nc)。上面的通过ssh协议实际上也是通过nc把数据从tcp转发到ssh tunnel.&lt;/p&gt;
+&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description>
+        <pubDate>Tue, 16 Jul 2019 00:00:00 +0800</pubDate>
+        <link>https://noproxy.github.io/2019/07/16/tips-git.html</link>
+        <guid isPermaLink="true">https://noproxy.github.io/2019/07/16/tips-git.html</guid>
+        
+        <category>tips</category>
+        
+        <category>git</category>
+        
+        
+      </item>
     
       <item>
         <title>Gradle实现Task没有源码时强制报错</title>
