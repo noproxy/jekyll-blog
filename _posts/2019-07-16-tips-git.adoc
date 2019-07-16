@@ -1,0 +1,39 @@
+= Git Tips
+:page-key: git-tips
+:page-tags: [tips, git]
+
+== Git Proxy
+
+=== Git Over HTTP(s)
+
+想让Git使用代理拉取代码，通过设置http.proxy变量来实现目的。可以通过环境变量，也可以使用git config来让它生效。
+
+可以参考：https://gist.github.com/evantoli/f8c23a37eb3558ab8765
+
+在诊断git的网络问题时，可以通过设置 `GIT_CURL_VERBOSE` 变量来开启网络请求的详细日志输出，如：
+
+[source,bash]
+----
+GIT_CURL_VERBOSE=2 git pull
+----
+
+[source,fish]
+----
+env GIT_CURL_VERBOSE=2 git pull
+----
+
+
+
+不过要知道的是，git一般有https和ssh两种访问方式，上述的配置代理以及诊断的方法都只适用于https协议的remote。
+
+=== Git Over ssh
+
+在git的remote是通过ssh方式访问的时候，既不使用http.proxy变量，也不使用curl进行网络请求。ssh协议（应用层协议为ssh）无法使用http代理（仅支持应用层协议为http的数据）来代理。要想代理ssh协议的请求，就必须：
+
+通过ssh协议在应用层代理::
+    既然http代理能代理http，那ssh代理也能代理ssh，也就是ssh tunnel。可参考：https://askubuntu.com/questions/311447/how-do-i-ssh-to-machine-a-via-b-in-one-command
+
+通过socks协议在TCP层代理::
+    socks协议（应用层协议）具备代理任何传输层（tcp，udp等）层数据的能力。所以如果代理服务器支持socks协议，就可以代理ssh请求。这时候需要拦截tcp请求，转发到socks代理。一般转发tcp数据是通过一个virtual network interface及iptable规则实现。更高级的实现可以直接使用netcat(nc)。上面的通过ssh协议实际上也是通过nc把数据从tcp转发到ssh tunnel.
+
+
