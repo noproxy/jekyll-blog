@@ -1,0 +1,92 @@
+= 如何查看Android Studio的错误信息
+:page-key: how-view-android-studio-error
+:page-tags: [gradle, tips, android]
+:page-liquid:
+
+不知道是Google没有产品经理，还是Jetbrains没有产品，反正现在Android Studio里查看错误信息成了一个非常艰难的事。每次有人找我求助，我都得教一遍他们如何查看错误信息。
+
+
+== 哪些窗口会有错误信息
+
+在Android Studio的底部有一排的Panel，错误信息可能出现在 `Build` ，也可能出现在 `Run` 中。
+
+不管是哪个Panel，都是有多个Tab的。最重要的是必须注意到，`Build` 总是有 `Build Output` 和 `Sync` 两个Tab。
+
+在本文中，我们用以下方式来表示这几个界面：
+
+- `View | Tool Windows | Run`
+- `View | Tool Windows | Build | Build Output`
+- `View | Tool Windows | Build | Sync`
+
+== 什么情况下看哪个Panel
+
+既然上面3个位置都可能有错误信息，你完全可以每个地方看一遍。
+
+=== `View | Tool Windows | Run`
+
+如图，通过 `View | Tool Windows | Gradle | Run Gradle Task` 这种方式执行的任意Gradle命令，输出都会出现在 `View | Tool Windows | Run`。
+
+
+同时，用这种方式执行过的gradle命令，idea会创建一个 `Run Configurations`，后续点击 `Run` 按钮执行这个的输出也还在同样的位置。
+
+=== `View | Tool Windows | Build`
+
+执行Android的Run Configurations就会出现在这个Panel。特别的是，IDE的Sync过程的输出，会在 `View | Tool Windows | Build | Sync`,
+其他的输出都在 `View | Tool Windows | Build | Build Output`。
+
+
+== 更加迷惑的行为
+
+== Tab的两种视图
+
+每个Tab，有两种视图，一种是树状视图，一种是纯文本视图。
+
+默认会展示 树状视图。这个视图必须点击到具体某项，才会在右边显示错误信息。很多情况下，这里会展示一些警告（红色文字）而不展示最关键的错误信息。
+
+
+使用这个按钮进行切换视图，可以到原始的文字错误信息。这里的输出就是Gradle的原始输出。
+
+== 自动弹出 `View | Tool Windows | Build`
+
+Android Studio有个傻缺行为是，执行任何Gradle的任务之后，都会附带一次自动的Sync操作。所以Studio会主动跳到 `View | Tool Windows | Build | Sync` 窗口。
+
+你必须注意，如之前所说，如果你是通过 link::通过 `View | Tool Windows | Gradle | Run Gradle Task` 执行的[Run Gradle Task]调用的gradle，它的输出不会出现在这个窗口。
+
+== 错误信息不够充分
+
+如果你试着找过了上文所说的每一个窗口，试过了每一个Tab，也切换了Tab的视图分别查看过纯文本和树形视图。那就
+
+这里给出一些获取更多信息的方法。
+
+=== 项目源码问题
+
+项目源码编译过程中发现的语法错误、不正确引用等，这类项目里源码的问题，错误信息一般都在输出的日志里，并且都是以ERROR级别输出。
+
+这类问题，因为都是由Gradle调用的外部程序发现的（如javac，aapt，dex，proguard），所以最后的Exception不会包含任何有用信息。
+请不要只看最后的异常，**你需要往前翻日志来发现问题** 。 javac，aapt，dex，proguard等外部程序往往会将错误信息以ERROR级别输出到日志。
+
+与很多人的常识相反的事，这类问题你应该尽可能的关闭Gradle的日志输出，而不是让gradle输入更详细的日志。如果你开启了``--info``参数，你应该删掉这个参数；你甚至可以使用 ``--quiet`` 参数来关闭任何干扰输出（ERROR级别在quiet也会输出）来定位问题。
+
+使用``--info``之后的输出日志一般能达到数MB，你能在这么多信息里找到一行毫不起眼的aapt的错误信息吗？
+
+=== Gradle Plugin问题或Gradle Bug
+
+另一类问题是由于一些Gradle Plugin自身错误引起，有可能是build.gradle中配置的问题，也可能是plugin的bug。这类问题正好与前一节项目源码的问题相反。
+定位问题的原因往往需要关注最后的Exception，如果Exception缺乏信息，就需要使用 '--info' 甚至 '--debug' 开启更详细的日志输出。
+
+==== 使用 `--stacktrace` 等参数
+
+在使用 `View | Tool Windows | Gradle | Run Gradle Task` 执行的时候，你是可以直接增加参数 `--stacktrace` 的，最后输出的信息就会有出错栈信息。
+
+但是对 下图的这种，以及 Sync，是不奏效的。
+
+
+你如果想这种情况也有栈信息，需要在 link::jetbrains://idea/settings?name=Build%2C+Execution%2C+Deployment--Compiler[`Preferences | Build, Execution, Deployment | Compiler`] 中增加参数。只有这里的是对Sync以及Android Build Configurations生效的。
+
+==== 远程调试
+
+TBD
+
+
+
+
