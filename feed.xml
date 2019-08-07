@@ -6,9 +6,165 @@
 </description>
     <link>https://noproxy.github.io/</link>
     <atom:link href="https://noproxy.github.io/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Tue, 16 Jul 2019 12:34:29 +0800</pubDate>
-    <lastBuildDate>Tue, 16 Jul 2019 12:34:29 +0800</lastBuildDate>
+    <pubDate>Wed, 07 Aug 2019 18:39:51 +0800</pubDate>
+    <lastBuildDate>Wed, 07 Aug 2019 18:39:51 +0800</lastBuildDate>
     <generator>Jekyll v3.8.6</generator>
+    
+      <item>
+        <title>如何查看Android Studio的错误信息</title>
+        <description>&lt;div id=&quot;preamble&quot;&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;不知道是Google没有产品经理，还是Jetbrains没有产品，反正现在Android Studio里查看错误信息成了一个非常艰难的事。每次有人找我求助，我都得教一遍他们如何查看错误信息。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;哪些窗口会有错误信息&quot;&gt;哪些窗口会有错误信息&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;在Android Studio的底部有一排的Panel，错误信息可能出现在 &lt;code&gt;Build&lt;/code&gt; ，也可能出现在 &lt;code&gt;Run&lt;/code&gt; 中。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;不管是哪个Panel，都是有多个Tab的。最重要的是必须注意到，&lt;code&gt;Build&lt;/code&gt; 总是有 &lt;code&gt;Build Output&lt;/code&gt; 和 &lt;code&gt;Sync&lt;/code&gt; 两个Tab。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;在本文中，我们用以下方式来表示这几个界面：&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;ulist&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;View | Tool Windows | Run&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;View | Tool Windows | Build | Build Output&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;View | Tool Windows | Build | Sync&lt;/code&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;什么情况下看哪个panel&quot;&gt;什么情况下看哪个Panel&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;既然上面3个位置都可能有错误信息，你完全可以每个地方看一遍。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;view-tool-windows-run&quot;&gt;&lt;code&gt;View | Tool Windows | Run&lt;/code&gt;&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;如图，通过 &lt;code&gt;View | Tool Windows | Gradle | Run Gradle Task&lt;/code&gt; 这种方式执行的任意Gradle命令，输出都会出现在 &lt;code&gt;View | Tool Windows | Run&lt;/code&gt;。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;同时，用这种方式执行过的gradle命令，idea会创建一个 &lt;code&gt;Run Configurations&lt;/code&gt;，后续点击 &lt;code&gt;Run&lt;/code&gt; 按钮执行这个的输出也还在同样的位置。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;view-tool-windows-build&quot;&gt;&lt;code&gt;View | Tool Windows | Build&lt;/code&gt;&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;执行Android的Run Configurations就会出现在这个Panel。特别的是，IDE的Sync过程的输出，会在 &lt;code&gt;View | Tool Windows | Build | Sync&lt;/code&gt;,
+其他的输出都在 &lt;code&gt;View | Tool Windows | Build | Build Output&lt;/code&gt;。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;更加迷惑的行为&quot;&gt;更加迷惑的行为&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;tab的两种视图&quot;&gt;Tab的两种视图&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;每个Tab，有两种视图，一种是树状视图，一种是纯文本视图。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;默认会展示 树状视图。这个视图必须点击到具体某项，才会在右边显示错误信息。很多情况下，这里会展示一些警告（红色文字）而不展示最关键的错误信息。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;使用这个按钮进行切换视图，可以到原始的文字错误信息。这里的输出就是Gradle的原始输出。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;自动弹出-view-tool-windows-build&quot;&gt;自动弹出 &lt;code&gt;View | Tool Windows | Build&lt;/code&gt;&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;Android Studio有个傻缺行为是，执行任何Gradle的任务之后，都会附带一次自动的Sync操作。所以Studio会主动跳到 &lt;code&gt;View | Tool Windows | Build | Sync&lt;/code&gt; 窗口。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;你必须注意，如之前所说，如果你是通过 link::通过 &lt;code&gt;View | Tool Windows | Gradle | Run Gradle Task&lt;/code&gt; 执行的[Run Gradle Task]调用的gradle，它的输出不会出现在这个窗口。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect1&quot;&gt;
+&lt;h2 id=&quot;错误信息不够充分&quot;&gt;错误信息不够充分&lt;/h2&gt;
+&lt;div class=&quot;sectionbody&quot;&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;如果你试着找过了上文所说的每一个窗口，试过了每一个Tab，也切换了Tab的视图分别查看过纯文本和树形视图。那就&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;这里给出一些获取更多信息的方法。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;项目源码问题&quot;&gt;项目源码问题&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;项目源码编译过程中发现的语法错误、不正确引用等，这类项目里源码的问题，错误信息一般都在输出的日志里，并且都是以ERROR级别输出。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;这类问题，因为都是由Gradle调用的外部程序发现的（如javac，aapt，dex，proguard），所以最后的Exception不会包含任何有用信息。
+请不要只看最后的异常，&lt;strong&gt;你需要往前翻日志来发现问题&lt;/strong&gt; 。 javac，aapt，dex，proguard等外部程序往往会将错误信息以ERROR级别输出到日志。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;与很多人的常识相反的事，这类问题你应该尽可能的关闭Gradle的日志输出，而不是让gradle输入更详细的日志。如果你开启了&lt;code&gt;--info&lt;/code&gt;参数，你应该删掉这个参数；你甚至可以使用 &lt;code&gt;--quiet&lt;/code&gt; 参数来关闭任何干扰输出（ERROR级别在quiet也会输出）来定位问题。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;使用&lt;code&gt;--info&lt;/code&gt;之后的输出日志一般能达到数MB，你能在这么多信息里找到一行毫不起眼的aapt的错误信息吗？&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect2&quot;&gt;
+&lt;h3 id=&quot;gradle-plugin问题或gradle-bug&quot;&gt;Gradle Plugin问题或Gradle Bug&lt;/h3&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;另一类问题是由于一些Gradle Plugin自身错误引起，有可能是build.gradle中配置的问题，也可能是plugin的bug。这类问题正好与前一节项目源码的问题相反。
+定位问题的原因往往需要关注最后的Exception，如果Exception缺乏信息，就需要使用 '--info' 甚至 '--debug' 开启更详细的日志输出。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect3&quot;&gt;
+&lt;h4 id=&quot;使用-stacktrace-等参数&quot;&gt;使用 &lt;code&gt;--stacktrace&lt;/code&gt; 等参数&lt;/h4&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;在使用 &lt;code&gt;View | Tool Windows | Gradle | Run Gradle Task&lt;/code&gt; 执行的时候，你是可以直接增加参数 &lt;code&gt;--stacktrace&lt;/code&gt; 的，最后输出的信息就会有出错栈信息。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;但是对 下图的这种，以及 Sync，是不奏效的。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;你如果想这种情况也有栈信息，需要在 link::jetbrains://idea/settings?name=Build%2C+Execution%2C+Deployment&amp;#8212;&amp;#8203;Compiler[&lt;code&gt;Preferences | Build, Execution, Deployment | Compiler&lt;/code&gt;] 中增加参数。只有这里的是对Sync以及Android Build Configurations生效的。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&quot;sect3&quot;&gt;
+&lt;h4 id=&quot;远程调试&quot;&gt;远程调试&lt;/h4&gt;
+&lt;div class=&quot;paragraph&quot;&gt;
+&lt;p&gt;TBD&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description>
+        <pubDate>Thu, 01 Aug 2019 00:00:00 +0800</pubDate>
+        <link>https://noproxy.github.io/2019/08/01/how-view-android-studio-error.html</link>
+        <guid isPermaLink="true">https://noproxy.github.io/2019/08/01/how-view-android-studio-error.html</guid>
+        
+        <category>gradle</category>
+        
+        <category>tips</category>
+        
+        <category>android</category>
+        
+        
+      </item>
     
       <item>
         <title>Git Tips</title>
