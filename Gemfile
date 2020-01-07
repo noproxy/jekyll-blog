@@ -1,6 +1,7 @@
 source "https://rubygems.org"
 
 gem "jekyll"
+gem 'asciidoctor-bibtex'
 gem 'pygments.rb', '~> 1.1.2'
 
 group :jekyll_plugins do
