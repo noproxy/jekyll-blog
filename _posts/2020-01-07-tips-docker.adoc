@@ -1,0 +1,179 @@
+= Docker usage
+:page-key: docker-usage
+:page-tag: tips
+:page-published: false
+:bibtex-file: docker-usage.bib
+:sectnums: on
+
+== 配置Docker Remote API
+
+=== 创建证书
+
+https://docs.docker.com/engine/security/https/#create-a-ca-server-and-client-keys-with-openssl
+
+根据官方文档 cite:[protect the docker daemon socket] ，在这一节中，我们需要完成以下步骤：
+
+. 生成CA证书私钥, 并导出公钥
+. 给服务器生成一个私钥，并创建一个certificate signing request (CSR)；然后使用CA证书对此CSR颁发证书
+. 给客户端生成一个私钥，并创建一个certificate signing request (CSR)；然后使用CA证书对此CSR颁发证书
+
+==== 创建CA证书
+
+[source,bash]
+----
+# 生成一个私钥
+openssl genrsa -aes256 -out ca-key.pem 4096
+
+# 创建证书/公钥
+openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem
+# 你需要输入一些信息，其中Common Name请填写域名host
+----
+
+本节中创建的文件ca.pem是公钥，在验证过程中，客户端和服务端都需要有此文件。ca-key.pem是CA的私钥，在对CSR颁发证书时，总是需要此文件，在验证过程中不需要。
+
+==== 创建服务端的证书
+
+[source,bash]
+.生成一个私钥
+----
+openssl genrsa -out server-key.pem 4096
+----
+
+[source,bash]
+.用此私钥生成一个签名请求，即CSR
+----
+openssl req -subj "/CN=$HOST" -sha256 -new -key server-key.pem -out server.csr
+----
+
+[NOTE]
+其中$HOST替换成服务器的host
+
+创建一个extensions config文件，用于指定我们的CSR的签名配置。内容如下：
+
+[source]
+.extfile.cnf
+----
+subjectAltName = DNS:$HOST,IP:10.10.10.20,IP:127.0.0.1
+extendedKeyUsage = serverAuth
+----
+
+[NOTE]
+上面的配置中必须指定这个签名请求想要认证的host，可以包含域名或者ip地址。
+
+[source,bash]
+.使用CA证书及私钥对这个CSR签名
+----
+openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem \
+  -CAcreateserial -out server-cert.pem -extfile extfile.cnf
+# 此时会询问CA私钥的pass phrase
+----
+
+本节中创建的文件server-key.pem是私钥，服务器会使用这个私钥进行数据加密。最后生成的server-cert.pem文件，是CA颁发给这个私钥的签名证书，并且只对签名过程中指定的host及ip生效。
+
+另外，extfile.cnf和server.csr文件是签名过程中间产物，可以删除。
+
+==== 创建客户端的证书
+
+[source,bash]
+.生成一个私钥
+----
+openssl genrsa -out key.pem 4096
+----
+
+[source,bash]
+.用此私钥生成一个签名请求，即CSR
+----
+openssl req -subj "/CN=client" -sha256 -new -key key.pem -out client.csr
+----
+
+创建一个extensions config文件，用于指定我们的CSR的签名配置。内容如下：
+
+[source]
+.extfile-client.cnf
+----
+extendedKeyUsage = clientAuth
+----
+
+[source,bash]
+.使用CA证书及私钥对这个CSR签名
+----
+openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem \
+  -CAcreateserial -out client-cert.pem -extfile extfile-client.cnf
+# 此时会询问CA私钥的pass phrase
+----
+
+本节中步骤基本和上节一致，只有CSR签名时的配置文件稍有区别。
+
+==== 移动文件
+
+以下文件需要放在dock daemon所在的服务端：
+
+- CA证书公钥：ca.pem
+- 服务端证书公钥：server-cert.pem
+- 服务端私钥：server-key.pem
+
+以下文件需要放在客户端 *~/.docker*：
+
+- CA证书公钥：ca.pem
+- 客户端证书公钥：cert.pem
+- 客户端私钥：key.pem
+
+[NOTE]
+客户端文件的命名采用了docker默认的读取名。
+
+另外，CA证书私钥需另外保存以备未来颁发新证书。
+
+=== 创建systemd unit
+
+准备好证书后，我们需要修改服务端的dockerd的启动参数来使其生效，可参考cite:[casey]。
+
+
+新创建一个systemd unit覆盖原有的启动命令，而不是直接修改系统的unit。
+
+[source]
+./etc/systemd/system/docker.service.d/override.conf
+----
+# /etc/systemd/system/docker.service.d/override.conf
+[Service]
+WorkingDirectory=/etc/systemd/system/docker.service.d
+ExecStart=
+ExecStart=/usr/bin/dockerd -H fd:// --tlsverify --tlscacert=docker-tls/ca/ca.pem --tlscert=docker-tls/server/server-cert.pem --tlskey=docker-tls/server/server-key.pem -H tcp://0.0.0.0:2376 --containerd=/run/containerd/containerd.sock
+----
+
+[NOTE]
+请将上述文件中的证书路径改成实际的值！
+
+[source,bash]
+.重启docker
+----
+sudo systemctl daemon-reload
+sudo systemctl restart docker.service
+----
+
+=== 使用TCP SOCK链接
+
+[source,bash]
+.测试是否可以链接成功
+----
+docker --tlsverify \
+ --tlscacert=docker-tls/ca/ca.pem \
+ --tlscert=docker-tls/client/client-cert.pem \
+ --tlskey=docker-tls/client/client-key.pem \
+ -H tcp://127.0.0.1:2376
+ --version
+----
+
+将证书移动到目录 `~/.docker` 中，并命名为 `ca.pem` `cert.pem` `key.pem`。并在环境变量配置如下变量后，docker命令将会默认使用tls加密的tcp sock。
+
+[source,bash]
+----
+export DOCKER_HOST=tcp://$HOST:2376 DOCKER_TLS_VERIFY=1
+----
+
+你还可通过 `DOCKER_CERT_PATH` 环境变量指定证书存放的目录。
+
+[bibliography]
+== References
+
+
+bibliography::docker-usage.bib[ieee]

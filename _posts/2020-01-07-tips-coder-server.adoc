@@ -1,0 +1,30 @@
+= Code Server
+:page-key: configuring-code-server
+:page-tag: tips
+:page-published: false
+
+易继新 O 温州站 1月11日 13：12-19：39 武汉站 二等座
+
+刘易       汉口-荆州  1月16日
+易亚洲 X   北京西-重庆北   1月23日 硬卧
+易亚洲 X   荆州-北京西    1月29日 硬卧
+
+==
+
+[source,bash]
+.start code server
+----
+docker create \
+    -u root \
+    -p 23761:8080 \
+    -v "/volume1/homes/toxzcp/.vseditor:/home/coder/.local/share/code-server" \
+    -v "/volume1/homes/toxzcp:/home/coder/project" \
+    -e PASSWORD=B8dad170B431266e \
+    --name coder_server \
+    noproxy/code-server:latest
+docker start coder_server
+----
+
+
+
+
